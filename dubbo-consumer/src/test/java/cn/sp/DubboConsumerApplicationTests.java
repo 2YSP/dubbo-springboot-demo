@@ -2,6 +2,8 @@ package cn.sp;
 
 import cn.sp.bean.User;
 import cn.sp.service.UserService;
+import cn.sp.spi.Robot;
+import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,7 @@ import java.util.List;
 public class DubboConsumerApplicationTests {
 
 
-	@Reference
+	@Reference(check = false)
 	private UserService userService;
 
 	
@@ -23,6 +25,15 @@ public class DubboConsumerApplicationTests {
 	public void contextLoads() {
 		List<User> users = userService.queryAll();
 		users.forEach(user -> System.out.println(user));
+	}
+
+	@Test
+	public void testSpi(){
+		ExtensionLoader<Robot> loader = ExtensionLoader.getExtensionLoader(Robot.class);
+		Robot bumblebee = loader.getExtension("bumblebee");
+		System.out.println(bumblebee.sayHello());
+		Robot optimusPrime = loader.getExtension("optimusPrime");
+		System.out.println(optimusPrime.sayHello());
 	}
 
 }
